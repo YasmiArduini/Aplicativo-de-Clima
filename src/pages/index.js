@@ -5,6 +5,7 @@ import '../styles/global.css';
 export default function Home() {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(true); // State to track if the music is playing
 
   const fetchWeather = async () => {
     if (!city.trim()) {
@@ -14,7 +15,7 @@ export default function Home() {
 
     try {
       const apiKey = '9199660e6fe10772d369ec858cad3c0f';
-      const encodedCity = encodeURIComponent(city.trim()); 
+      const encodedCity = encodeURIComponent(city.trim());
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${encodedCity}&appid=${apiKey}&units=metric`
       );
@@ -31,6 +32,16 @@ export default function Home() {
     }
   };
 
+  const toggleMusic = () => {
+    const audio = document.getElementById('background-music'); // Access the audio element
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying(!isPlaying); // Toggle the playing state
+  };
+
   return (
     <>
       <Head>
@@ -39,9 +50,15 @@ export default function Home() {
 
       <div className="app-container">
         <video autoPlay muted loop className="background-video">
-          <source src="./assets/images/background.mp4" type="video/mp4" />
+          <source src="/assets/videos/background.mp4" type="video/mp4" />
           Seu navegador não suporta vídeos em HTML5.
         </video>
+
+        {/* Background Music */}
+        <audio id="background-music" autoPlay loop>
+          <source src="/assets/audio/background lofi.mp3" type="audio/mpeg" />
+          Seu navegador não suporta o elemento de áudio.
+        </audio>
 
         <div className="content">
           <h1 className="title">Previsão do Tempo</h1>
@@ -54,9 +71,14 @@ export default function Home() {
               className="city-input"
             />
             <button onClick={fetchWeather} className="search-button">
-              Buscar
+              <span className="search-icon">🔍</span>
             </button>
           </div>
+
+          {/* Pause/Play Button */}
+          <button onClick={toggleMusic} className="music-button">
+            {isPlaying ? 'Pause Music' : 'Play Music'}
+          </button>
 
           {weather && (
             <div className="weather-info">
